@@ -10,21 +10,26 @@ app.use(express.json())
 app.use('/api', rootRouter)
 
 
+// export const prisma = new PrismaClient({
+//     log: ["query", "info", "warn", "error"]
+// }).$extends({
+//     query: {
+//         user: {
+//             create({ args, query }) {
+//                 args.data = registerSchema.parse(args.data)
+//                 return query(args)
+//             }
+//         }
+//     }
+// }) or---------
 
-export const prismaClient = new PrismaClient({
-    log: ["query", "info", "warn", "error"]
-}).$extends({
-    query: {
-        user: {
-            create({ args, query }) {
-                args.data = registerSchema.parse(args.data)
-                return query(args)
-            }
-        }
-    }
+export const prisma = new PrismaClient({
+    log: ["query"]
 })
 
 app.use(errorCatcher)
-app.listen(PORT, () => {
-    console.log(`Example app listening on PORT ${PORT}`)
+app.listen(PORT, async () => {
+    await prisma.$connect().then(() => console.log("DB connected")).catch((err) => console.log(err))
+    console.log(`server listening on PORT ${PORT}`)
+
 })

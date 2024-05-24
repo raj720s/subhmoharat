@@ -1,18 +1,21 @@
 // message , stateus and  err  code handler 
 
-export class RootError extends Error {
-    message: string
-    status: number
-    error: ErrorCodes
-    errors: any
 
-    constructor(message: string, status: number, error: ErrorCodes, errors: any) {
+export class ErrorHandler extends Error {
+
+    message: string;
+    statusCode: number
+    errorCode: number;
+    error: any
+
+    constructor(message: string, errorCode: ErrorCodes, statusCode: StatusCodes, error: any) {
         super(message)
         this.message = message
+        this.errorCode = errorCode
+        this.statusCode = statusCode
         this.error = error
-        this.status = status
-        this.errors = errors
     }
+
 }
 
 export enum ErrorCodes {
@@ -27,5 +30,21 @@ export enum ErrorCodes {
     USER_ALREADY_EXIST = 1005,
     INCORRECT_PASSWORD = 1006,
     INVALID_TOKEN = 1007,
-    TOKEN_EXPIRED = 1008
+    TOKEN_EXPIRED = 1008,
+    INVALID_REQUEST = 1009,
+}
+
+export enum StatusCodes {
+    SUCCESS = 200,
+    CREATED = 201,
+    ACCEPTED = 202,
+    NO_CONTENT = 204,
+    BAD_REQUEST = 400,
+    UNAUTHORIZED = 401,
+    FORBIDDEN = 403,
+    REDIRECT = 303,
+    NOT_FOUND = 404,
+    INTERNAL_SERVER_ERROR = 500,
+    NOT_IMPLEMENTED = 501,
+
 }
