@@ -1,7 +1,7 @@
-import { ErrorCodes, ErrorHandler, StatusCodes } from "./root"
+import { ERRORCODES, ErrorException, STATUSCODES } from "./root"
 
-export class BadRequest extends ErrorHandler {
-    constructor(message: string, errorCode: ErrorCodes, statusCode: StatusCodes, error: any) {
-        super(message, errorCode, statusCode, error)
+export class BadRequest extends ErrorException {
+    constructor(message: string, errorCode: ERRORCODES, statusCode: STATUSCODES, error: any) {
+        super(message, errorCode, 400, null)
     }
 }

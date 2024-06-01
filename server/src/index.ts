@@ -1,13 +1,19 @@
 import express, { Express, Request, Response } from "express";
 import { PORT } from "./secrets";
-import rootRouter from "./routes";
+import rootRouter from "./routes/routes";
 import { PrismaClient } from "@prisma/client";
-import { errorCatcher } from "./middlewares/error";
-import { registerSchema } from "./schema/users";
+
+import { registerSchema } from "./Validations/users";
+import { errorMiddleware } from "./middlewares/error";
+import { invalidRouteCatcher } from "./middlewares/invalidRoute";
+
 const app = express();
 app.use(express.json())
 
 app.use('/api', rootRouter)
+
+// app.use(errorMiddleware)
+
 
 
 // export const prisma = new PrismaClient({
@@ -27,9 +33,14 @@ export const prisma = new PrismaClient({
     log: ["query"]
 })
 
-app.use(errorCatcher)
+
 app.listen(PORT, async () => {
     await prisma.$connect().then(() => console.log("DB connected")).catch((err) => console.log(err))
     console.log(`server listening on PORT ${PORT}`)
 
 })
+// @ts-ignore
+app.use('*', invalidRouteCatcher)
+// @ts-ignore
+app.use(errorMiddleware)
+

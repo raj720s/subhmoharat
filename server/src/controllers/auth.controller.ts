@@ -4,24 +4,22 @@ import { compareSync, hashSync } from 'bcrypt'
 import * as jwt from 'jsonwebtoken'
 import { JWT_SECRET } from "../secrets";
 import { BadRequest } from "../exceptions/badRequest";
-import { ErrorCodes, StatusCodes } from "../exceptions/root";
-import { InvalidRequest } from "../exceptions/validation";
-import { registerSchema } from "../schema/users";
+import { ERRORCODES, ErrorException, STATUSCODES } from "../exceptions/root";
+import { registerSchema } from "../Validations/users";
+import { ZodError } from "zod";
+import { InvalidError } from "../exceptions/validation";
+
+
 export const register = async (req: Request, res: Response, next: NextFunction) => {
-    // with generich catcher middlewareroute no need of try and catch 
-
-    //validate
-
-    registerSchema.parse(req.body)
-    const { email, password, name } = req.body
-
+    const body = registerSchema.parse(req.body)
+    const { email, password, name } = body
     let user = await prisma.user.findFirst({
         where: {
             email
         }
     })
     if (user) {
-        return next(new BadRequest("User already exist", ErrorCodes.USER_ALREADY_EXIST, StatusCodes.BAD_REQUEST, user))
+        return next(new BadRequest('User already exist', ERRORCODES.USER_ALREADY_EXIST, STATUSCODES.BAD_REQUEST, user))
     }
     user = await prisma.user.create({
         data: {
@@ -30,8 +28,7 @@ export const register = async (req: Request, res: Response, next: NextFunction) 
             password: hashSync(password, 10)
         }
     })
-    res.json(user)
-
+    return res.json(user)
 }
 // export const register = async (req: Request, res: Response, next: NextFunction) => {
 //     try {
@@ -63,7 +60,7 @@ export const register = async (req: Request, res: Response, next: NextFunction) 
 //     }
 // }
 
-export const login = async (req: Request, res: Response) => {
+export const login = async (req: Request, res: Response, next: NextFunction) => {
     const { email, password } = req.body
     const user = await prisma.user.findFirst({
         where: {
@@ -71,14 +68,20 @@ export const login = async (req: Request, res: Response) => {
         }
     })
     if (!user) {
-        throw Error("User not found")
+        return next(new ErrorException('User not found', ERRORCODES.USER_NOT_FOUND, STATUSCODES.NOT_FOUND, null))
     }
 
     if (!compareSync(password, user.password)) {
-        throw Error("Wrong password")
+        return next(new ErrorException('Incorrect password', ERRORCODES.INCORRECT_PASSWORD, STATUSCODES.BAD_REQUEST, null))
     }
 
     const token = jwt.sign({ id: user.id }, JWT_SECRET, { expiresIn: '1d' })
     res.json({ user, token })
+}
+
+// me  api  return logged in user 
+
+export const me = (req: any, res: Response, next: NextFunction) => {
+    res.json(req.user)
 }
 

@@ -1,14 +1,11 @@
 // message , stateus and  err  code handler 
 
-
-export class ErrorHandler extends Error {
-
+export class ErrorException extends Error {
     message: string;
     statusCode: number
     errorCode: number;
     error: any
-
-    constructor(message: string, errorCode: ErrorCodes, statusCode: StatusCodes, error: any) {
+    constructor(message: string, errorCode: ERRORCODES, statusCode: STATUSCODES, error: any) {
         super(message)
         this.message = message
         this.errorCode = errorCode
@@ -18,7 +15,7 @@ export class ErrorHandler extends Error {
 
 }
 
-export enum ErrorCodes {
+export enum ERRORCODES {
     BAD_REQUEST = 400,
     UNAUTHORIZED = 401,
     FORBIDDEN = 403,
@@ -34,7 +31,7 @@ export enum ErrorCodes {
     INVALID_REQUEST = 1009,
 }
 
-export enum StatusCodes {
+export enum STATUSCODES {
     SUCCESS = 200,
     CREATED = 201,
     ACCEPTED = 202,
@@ -46,5 +43,4 @@ export enum StatusCodes {
     NOT_FOUND = 404,
     INTERNAL_SERVER_ERROR = 500,
     NOT_IMPLEMENTED = 501,
-
 }

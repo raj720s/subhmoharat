@@ -1,10 +1,18 @@
 import { Router } from 'express'
-import { login, register } from '../controllers/auth.controller'
-import { errorMiddleware } from '../middlewares/errorMiddleware'
+import { login, me, register } from '../controllers/auth.controller'
+import { asyncMiddleware } from '../middlewares/asyncError'
+import { authMiddleware } from '../middlewares/authorize'
+
+
+
+
 
 const authRoutes: Router = Router()
 
-authRoutes.post('/login', errorMiddleware(login))
-authRoutes.post('/register', errorMiddleware(register))
+authRoutes.post('/login', asyncMiddleware(login))
+authRoutes.post('/register', asyncMiddleware(register))
+authRoutes.get('/me', authMiddleware, asyncMiddleware(me))
+
+
 
 export default authRoutes
