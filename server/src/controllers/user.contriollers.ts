@@ -90,3 +90,40 @@ export const updateUser = async (req: UserReq, res: Response, next: NextFunction
         throw new ErrorException(error.message, ERRORCODES.NOT_FOUND, STATUSCODES.NOT_FOUND, error)
     }
 }
+
+export const listAllusers = async (req: UserReq, res: Response, next: NextFunction) => {
+    const users = await prisma.user.findMany({
+        skip: Number(req.query.skip) || 0,
+        take: 5
+    })
+    res.json(users)
+}
+
+export const getUserById = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+
+        const user = await prisma.user.findFirstOrThrow({
+            where: {
+                id: Number(req.params.id)
+            },
+            include: {
+                addresses: true
+            }
+        })
+        res.json(user)
+    } catch (error) {
+        throw new ErrorException('User not found', ERRORCODES.NOT_FOUND, STATUSCODES.NOT_FOUND, error)
+    }
+}
+
+export const changeUserRole = async (req: Request, res: Response, next: NextFunction) => {
+    const user = await prisma.user.update({
+        where: {
+            id: Number(req.params.id)
+        },
+        data: {
+            role: req.body.role
+        }
+    })
+    res.json(user)
+}

@@ -5,7 +5,8 @@
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
+  previewFeatures = ["fullTextIndex", "fullTextSearch"]
 }
 
 datasource db {
@@ -58,6 +59,7 @@ model Product {
   cartItems     CartItems[]
   orderProducts OrderProduct[]
 
+  @@fulltext([name, desc, tags])
   @@map("products")
 }
 
@@ -75,13 +77,14 @@ model CartItems {
 }
 
 model Order {
-  id            Int            @id @default(autoincrement())
+  id            Int                @id @default(autoincrement())
   userId        Int
-  user          User           @relation(fields: [userId], references: [id])
+  user          User               @relation(fields: [userId], references: [id])
   amount        Decimal
   address       String
-  createdAt     DateTime       @default(now())
-  updatedAt     DateTime       @updatedAt
+  status        ORDER_EVENT_STATUS @default(PENDING)
+  createdAt     DateTime           @default(now())
+  updatedAt     DateTime           @updatedAt
   orderProducts OrderProduct[]
   orderEvents   OrderEvent[]
 
@@ -103,10 +106,10 @@ model OrderProduct {
 }
 
 model OrderEvent {
-  id        Int                @id @default(autoincrement())
-  orderId   Int
-  order     Order              @relation(fields: [orderId], references: [id])
-  productId Int
+  id      Int   @id @default(autoincrement())
+  orderId Int
+  order   Order @relation(fields: [orderId], references: [id])
+
   status    ORDER_EVENT_STATUS @default(PENDING)
   createdAt DateTime           @default(now())
   updatedAt DateTime           @updatedAt

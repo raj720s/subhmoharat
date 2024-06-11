@@ -64,3 +64,23 @@ export const getProduct = async (req: Request, res: Response, next: NextFunction
 
 }
 
+
+export const searchProducts = async (req: Request, res: Response, next: NextFunction) => {
+    const products = await prisma.product.findMany({
+        where: {
+            name: {
+                search: req.query.q?.toString()
+            },
+            desc: {
+                search: req.query.q?.toString()
+
+            }
+            , tags: {
+                search: req.query.q?.toString()
+
+            }
+
+        }
+    })
+    res.json({ products }) // count, data: products
+}

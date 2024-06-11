@@ -14,8 +14,6 @@ app.use('/api', rootRouter)
 
 // app.use(errorMiddleware)
 
-
-
 // export const prisma = new PrismaClient({
 //     log: ["query", "info", "warn", "error"]
 // }).$extends({
@@ -33,11 +31,9 @@ export const prisma = new PrismaClient({
     log: ["query"]
 })
 
-
 app.listen(PORT, async () => {
     await prisma.$connect().then(() => console.log("DB connected")).catch((err) => console.log(err))
     console.log(`server listening on PORT ${PORT}`)
-
 })
 // @ts-ignore
 app.use('*', invalidRouteCatcher)
