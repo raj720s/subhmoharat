@@ -61,9 +61,7 @@ export const getProduct = async (req: Request, res: Response, next: NextFunction
 
 
     }
-
 }
-
 
 export const searchProducts = async (req: Request, res: Response, next: NextFunction) => {
     const products = await prisma.product.findMany({
